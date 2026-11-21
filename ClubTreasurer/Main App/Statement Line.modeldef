@@ -1,0 +1,18 @@
+#@AppName:       ClubTreasurer
+#@ Name:         StatementLine
+#@ Description:  Statement Line
+#@ VmSuffix:     ViewModel
+#@ LoadSequence: 4
+
+Name,Desc,Type,ViewModelEntity,Optional,Id,InitValue,InInit,BeforeInsert,Lookup,EnumName,EnumValue0,EnumValue1,EnumValue2,EnumValue3
+statementLineId,Statement Line ID,UUID,,,true,,false,unique,True
+statement,Statement,ViewModel,Statement,true,,,true,
+sequence,Sequence,Int,,,,Int(Int16.max),optional
+transCode,Trans Code,String,,,,,optional
+date,Date,Date,,true,,,optional,nonBlank
+type,Type,String,,,,,optional,
+drCr,Debit / Credit,Int16Enum,,,,.debit,optional,,,DebitCreditType,debit,credit
+text,Text,String,,,,,optional,,,,,
+amount,Amount,Float,,,,,optional,,,,,
+payee,Payee,String,,,,,optional,,,,,
+notes,Notes,String,,,,,optional,,,,,

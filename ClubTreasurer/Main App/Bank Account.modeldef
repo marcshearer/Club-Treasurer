@@ -1,0 +1,10 @@
+#@AppName:       ClubTreasurer
+#@ Name:         BankAccount
+#@ Description:  Bank Account
+#@ VmSuffix:     ViewModel
+#@ LoadSequence: 2
+#
+Name,Desc,Type,Optional,Id,InitValue,InInit,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
+bankAccountId,Bank Account ID,UUID,,true,,false,unique,True
+desc,Description,String,,,,true,unique
+sequence,Sequence,Int,,,Int(Int16.max),optional,
