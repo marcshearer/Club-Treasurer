@@ -33,7 +33,6 @@
                 { "path": "MyApp.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Club Treasurer App.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Persistence.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
-                { "path": "Master Data.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "UserDefaults.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Declarations.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Settings.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },

@@ -55,7 +55,7 @@ class MyApp {
     public static var format: Format = .tablet
  
     public func start() {
-        MasterData.shared.load()
+        loadMasterData()
         Themes.selectTheme(.standard)
         self.registerDefaults()
         #if !widget
@@ -96,6 +96,18 @@ class MyApp {
             initial[value.name] = value.defaultValue ?? ""
         }
         MyApp.defaults.register(defaults: initial)
+    }
+    
+    public func loadMasterData() {
+        /// **Builds in-memory mirror of data**
+        /// with pointers to managed objects
+        /// Note that this infers that there will only ever be 1 instance of the app accessing the database
+        
+        for entity in MyApp.objectModel.entities.sorted(by: {$0.loadSequence < $1.loadSequence}) {
+            _ = entity.viewModelType.loadData(createDefaultData: true)
+        }
+        
+        MyApp.masterDataLoaded = true
     }
 }
 

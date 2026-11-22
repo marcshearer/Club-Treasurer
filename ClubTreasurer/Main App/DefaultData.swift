@@ -31,5 +31,10 @@ extension ExpenseCodeViewModel {
         ExpenseCodeViewModel(code: "74000", desc: "Rent or lease").insert()
         ExpenseCodeViewModel(code: "77000", desc: "Utilities").insert()
     }
+}
     
+extension BankAccountViewModel {
+    override public class func createDefaultData() {
+        BankAccountViewModel(desc: "Default Bank Account").insert()
+    }
 }

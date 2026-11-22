@@ -30,7 +30,6 @@ public class Model {
     public var entity: Entity? = nil
     public var id: UUID { fatalError("Must be overridden") }
     public var managedObject: NSManagedObject? = nil
-    public static var masterData: [ViewModel] = []
     
     public var newManagedObject: NSManagedObject {
         fatalError("Must be overridden")
@@ -40,27 +39,12 @@ public class Model {
         // Should be overridden
     }
     
-    public func save() {
-        if self.isNew {
-            insert(viewModel: self)
-        } else {
-            save(viewModel: self)
-        }
-    }
-
     public func beforeSave() {
-    }
-    
-    public func insert() {
-        insert(viewModel: self)
     }
     
     public func beforeInsert() {
     }
 
-    public func remove() {
-        remove(viewModel: self)
-    }
     
     public func beforeRemove() {
     }
@@ -75,45 +59,7 @@ public class Model {
     public var isNew: Bool {
         return self.managedObject == nil
     }
-    
-    public func insert(viewModel: ViewModel) {
-        assert(viewModel.isNew, "Cannot insert \(viewModel.entity?.name ?? "Entity") which already has a managed object")
-        assert(!viewModel.exists, "\(viewModel.entity?.name ?? "Entity") already exists and cannot be created")
-        viewModel.beforeInsert()
-        let newMO = viewModel.newManagedObject
-        CoreData.update {
-            viewModel.managedObject = newMO
-            viewModel.updateMO()
-            
-            Self.masterData.append(viewModel)
-        }
-    }
-    
-    public func remove(viewModel: ViewModel) {
-        assert(!viewModel.isNew, "Cannot remove \(viewModel.entity?.name ?? "Entity") which doesn't already have a managed object")
-        assert(viewModel.exists, "\(viewModel.entity?.name ?? "Entity") does not exist and cannot be deleted")
-        viewModel.beforeRemove()
-        CoreData.update {
-            if let index = Self.masterData.firstIndex(where: {$0.id == viewModel.id}) {
-                Self.masterData.remove(at: index)
-            }
-            CoreData.context.delete(viewModel.managedObject!)
-        }
-    }
-    
-    public func save(viewModel: ViewModel) {
-        assert(!viewModel.isNew, "Cannot save \(viewModel.entity?.name ?? "Entity") which doesn't already have a managed object")
-        assert(viewModel.exists, "\(viewModel.entity?.name ?? "Entity") does not exist and cannot be updated")
-        viewModel.beforeSave()
-        if viewModel.changed {
-            CoreData.update {
-                viewModel.updateMO()
-            }
-            if let index = Self.masterData.firstIndex(where: {$0.id == viewModel.id}) {
-                Self.masterData[index] = viewModel
-            }
-        }
-    }
+        
     var changed: Bool {
         get {
             var result = false
@@ -278,6 +224,53 @@ public protocol ViewModelProtocol: Identifiable, CustomStringConvertible, Custom
     static func loadData(createDefaultData: Bool)
     static func createDefaultData()
     static func == (lhs: Self, rhs: Self) -> Bool
+}
+
+public protocol DataStoreProtocol: AnyObject {
+    associatedtype DataModel: ViewModel
+    static var masterData: [DataModel] { get set }
+}
+
+extension DataStoreProtocol where Self: ViewModel {
+    
+    public func insert(viewModel: DataModel) {
+        assert(viewModel.isNew, "Cannot insert \(viewModel.entity?.name ?? "Entity") which already has a managed object")
+        assert(!viewModel.exists, "\(viewModel.entity?.name ?? "Entity") already exists and cannot be created")
+        viewModel.beforeInsert()
+        let newMO = viewModel.newManagedObject
+        CoreData.update {
+            viewModel.managedObject = newMO
+            viewModel.updateMO()
+            
+            Self.masterData.append(viewModel)
+        }
+    }
+    
+    public func remove(viewModel: DataModel) {
+        assert(!viewModel.isNew, "Cannot remove \(viewModel.entity?.name ?? "Entity") which doesn't already have a managed object")
+        assert(viewModel.exists, "\(viewModel.entity?.name ?? "Entity") does not exist and cannot be deleted")
+        viewModel.beforeRemove()
+        CoreData.update {
+            if let index = Self.masterData.firstIndex(where: {$0.id == viewModel.id}) {
+                Self.masterData.remove(at: index)
+            }
+            CoreData.context.delete(viewModel.managedObject!)
+        }
+    }
+    
+    public func save(viewModel: DataModel) {
+        assert(!viewModel.isNew, "Cannot save \(viewModel.entity?.name ?? "Entity") which doesn't already have a managed object")
+        assert(viewModel.exists, "\(viewModel.entity?.name ?? "Entity") does not exist and cannot be updated")
+        viewModel.beforeSave()
+        if viewModel.changed {
+            CoreData.update {
+                viewModel.updateMO()
+            }
+            if let index = Self.masterData.firstIndex(where: {$0.id == viewModel.id}) {
+                Self.masterData[index] = viewModel
+            }
+        }
+    }
 }
 
 public class Entity {

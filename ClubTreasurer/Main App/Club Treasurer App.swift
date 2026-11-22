@@ -39,6 +39,9 @@ struct SelectInputView : View {
         VStack {
             Banner(title: Binding.constant("Club Treasurer"), back: false)
             Text("Hello World")
+                .onTapGesture {
+                    // Trap here
+                }
                 .frame(width: 500, height: 500)
             Spacer()
         }
