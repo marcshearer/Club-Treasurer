@@ -119,7 +119,7 @@ public class Model {
                             }
                         case .viewModel:
                             if let vmValue = vmValue as? ViewModel, let moValue = moValue as? ViewModel {
-                                if !(vmValue == moValue) {
+                                if !(vmValue.id == moValue.id) {
                                     result = true
                                 }
                             }

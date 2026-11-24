@@ -22,11 +22,11 @@ struct InsetView <Content>: View where Content: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Spacer().frame(height: 16)
+            Spacer().frame(height: 10)
             if let title = title {
                 VStack {
                     HStack {
-                        Spacer().frame(width: 40)
+                        Spacer().frame(width: 20)
                         Text(title.uppercased()).foregroundColor(Palette.alternate.faintText)
                         Spacer()
                     }
@@ -34,17 +34,18 @@ struct InsetView <Content>: View where Content: View {
                 }
             }
             HStack {
-                Spacer().frame(width: 16)
+                Spacer().frame(width: 10)
                 VStack(spacing: 0) {
                     Spacer().frame(height: 8)
                     HStack {
-                        Spacer().frame(width: 16)
+                        Spacer().frame(width: 5)
                         content
+                        Spacer().frame(width: 5)
                     }
                 }
                 .background(color.background)
                 .cornerRadius(10)
-                Spacer().frame(width: 16)
+                Spacer().frame(width: 10)
             }
         }
         .foregroundColor(color.text)

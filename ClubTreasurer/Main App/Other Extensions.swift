@@ -371,16 +371,20 @@ extension NSMutableAttributedString {
 }
 
 extension Float {
-    func toString(places: Int, exact: Bool = false) -> String{
-        let rounded = Utility.round(self, places: places)
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = places
-        if exact {
-            formatter.minimumFractionDigits = places
+    func toString(places: Int, exact: Bool = false, blankIfZero: Bool = false) -> String{
+        if blankIfZero && self == 0 {
+            return ""
+        } else {
+            let rounded = Utility.round(self, places: places)
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.maximumFractionDigits = places
+            if exact {
+                formatter.minimumFractionDigits = places
+            }
+            let number = NSNumber(value: rounded)
+            return formatter.string(from: number)!
         }
-        let number = NSNumber(value: rounded)
-        return formatter.string(from: number)!
     }
     
     func roundUp(places: Int) -> Float {
@@ -500,5 +504,17 @@ struct PaletteModifier : ViewModifier {
 extension View {
     func palette(_ color: ThemeBackgroundColorName, _ textType: ThemeTextType? = .normal) -> some View {
         self.modifier(PaletteModifier(color: PaletteColor(color), textType: textType ?? .normal))
+    }
+}
+
+protocol HashableObject: AnyObject, Hashable {}
+
+extension HashableObject {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs === rhs
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }

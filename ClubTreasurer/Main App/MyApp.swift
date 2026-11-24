@@ -52,7 +52,7 @@ class MyApp {
     public static let target: Target = .iOS
     #endif
 
-    public static var format: Format = .tablet
+    public static var format: Format = .computer
  
     public func start() {
         loadMasterData()

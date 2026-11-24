@@ -73,7 +73,7 @@ struct Banner: View {
             VStack {
                 Spacer()
                 HStack {
-                    Spacer().frame(width: 20)
+                    Spacer().frame(width: 10)
 
                     if (leftTitle ?? !back) {
                         HStack {
@@ -156,8 +156,10 @@ struct Banner: View {
     func backPressed() {
         if backEnabled?() ?? true {
             if backAction?() ?? true {
-                if backForceDismiss {
-                    self.presentationMode.wrappedValue.dismiss()
+                if MyApp.target == .iOS && backForceDismiss {
+                    #if targetEnvironment(iOS)
+                    self.forceDismiss()
+                    #endif
                 } else {
                     self.presentationMode.wrappedValue.dismiss()
                 }

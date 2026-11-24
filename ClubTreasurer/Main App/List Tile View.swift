@@ -11,9 +11,9 @@ struct ListTileView <Content> : View where Content : View {
     var color: PaletteColor
     var font: Font
     var content: Content
-    var height: CGFloat = 92
+    var height: CGFloat = defaultTileHeight
     
-    init(color: PaletteColor = Palette.tile, font: Font = .largeTitle, height: CGFloat = 92, @ViewBuilder content: ()->Content) {
+    init(color: PaletteColor = Palette.tile, font: Font = defaultFont, height: CGFloat = defaultTileHeight, @ViewBuilder content: ()->Content) {
         self.color = color
         self.font = font
         self.height = height
@@ -22,21 +22,22 @@ struct ListTileView <Content> : View where Content : View {
 
     var body: some View {
         VStack {
-            Spacer().frame(height: 4)
+            Spacer().frame(height: defaultSpacing / 8)
             HStack {
-                Spacer().frame(width: 16)
+                Spacer().frame(width: defaultSpacing)
                 HStack {
-                    Spacer().frame(width: 16)
+                    Spacer().frame(width: defaultSpacing * 2)
                     content
                     Spacer()
                 }
-                .frame(height: height - 12)
+                .frame(height: height - (defaultSpacing / 4))
                 .background(color.background)
-                .cornerRadius(16)
-            Spacer().frame(width: 16)
+                .cornerRadius(defaultCornerRadius)
+                Spacer().frame(width: defaultSpacing)
             }
-            Spacer().frame(height: 8)
+            Spacer().frame(height: defaultSpacing / 8)
         }
+        .frame(height: height)
         .foregroundColor(color.text)
         .font(font)
     }

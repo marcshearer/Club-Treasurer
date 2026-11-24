@@ -68,7 +68,7 @@ enum ThemeTextType: CaseIterable {
     case theme
 }
 
-nonisolated enum ThemeBackgroundColorName: Hashable, CaseIterable, Sendable {
+enum ThemeBackgroundColorName: CaseIterable {
     case clear
     case nearlyClear
     case banner
@@ -143,7 +143,7 @@ enum ThemeTextColorSetName: CaseIterable {
     case lightBackground
 }
 
-nonisolated enum ThemeSpecificColorName: Hashable, CaseIterable, Sendable {
+enum ThemeSpecificColorName: CaseIterable {
     case bannerBackButton
     case alternateBannerBackButton
     case maskBackground

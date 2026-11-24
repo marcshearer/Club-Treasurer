@@ -6,7 +6,7 @@
 
 Name,Desc,Type,ViewModelEntity,Optional,Id,InitValue,InInit,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
 statementId,Statement ID,UUID,,,true,,,unique,true
-bankAccount,Bank Account,ViewModel,BankAccount,true,,,true,set,
-desc,Description,String,,,,,true,unique,true
-sequence,Sequence,Int,,,,Int(Int16.max),true,,
+bankAccount,Bank Account,ViewModel,BankAccount,true,,,true,,
+desc,Description,String,,,,,optional,unique,true
+sequence,Sequence,Int,,,,Int(Int16.max),optional,,
 importDate,Import Date,Date,,true,,,,,

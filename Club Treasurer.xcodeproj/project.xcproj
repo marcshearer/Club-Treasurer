@@ -60,6 +60,7 @@
               "children": [
                 { "path": "Object Model.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Version.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "Drop Delegate.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
               ],
             }, {
               "kind": "group",
@@ -72,6 +73,7 @@
                 { "path": "Input Float.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Input Title.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Clickable Text.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "View Wrappers.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Inset View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "List Tile View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Message Box.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
@@ -100,6 +102,20 @@
               "name": "Data overrides",
               "children": [
                 { "path": "DefaultData.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+              ],
+            }, {
+              "kind": "group",
+              "name": "Imports",
+              "children": [
+                { "path": "Import BoS.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+              ],
+            }, {
+              "kind": "group",
+              "name": "Views",
+              "children": [
+                { "path": "Root View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "Bank Account View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "Statement View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
               ],
             },
           ],

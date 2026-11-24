@@ -23,25 +23,28 @@ var inputTopHeight: CGFloat { 5.0 }
 let inputDefaultHeight: CGFloat = 20.0
 let inputCornerRadius: CGFloat = 4.0
 let inputPickerCornerRadius: CGFloat = 3.0
-var inputToggleDefaultHeight: CGFloat { MyApp.format == .tablet ? 30.0 : 16.0 }
-var bannerHeight: CGFloat { (MyApp.format == .tablet ? 60.0 : 50.0) }
-var alternateBannerHeight: CGFloat { MyApp.format == .tablet ? 50.0 : 35.0 }
-var minimumBannerHeight: CGFloat { MyApp.format == .tablet ? 40.0 : 20.0 }
-var bannerBottom: CGFloat { (MyApp.format == .tablet ? 30.0 : 20.0) }
+var inputToggleDefaultHeight: CGFloat { MyApp.format != .phone ? 30.0 : 16.0 }
+var bannerHeight: CGFloat { (MyApp.format != .phone ? 40.0 : 40.0) }
+var defaultTileHeight: CGFloat { (MyApp.format != .phone ? 60.0 : 40.0) }
+var defaultSpacing: CGFloat { (MyApp.format != .phone ? 6.0 : 4.0) }
+var defaultCornerRadius: CGFloat { (MyApp.format != .phone ? 6.0 : 4.0) }
+var alternateBannerHeight: CGFloat { MyApp.format != .phone ? 40.0 : 35.0 }
+var minimumBannerHeight: CGFloat { MyApp.format != .phone ? 40.0 : 20.0 }
+var bannerBottom: CGFloat { (MyApp.format != .phone ? 10.0 : 10.0) }
 var slideInMenuRowHeight: CGFloat { MyApp.target == .iOS ? 50 : 25 }
 
 // Fonts (Font)
-var bannerFont: Font { Font.system(size: (MyApp.format == .tablet ? 32.0 : 24.0)) }
-var alternateBannerFont: Font { Font.system(size: (MyApp.format == .tablet ? 20.0 : 18.0)) }
-var defaultFont: Font { Font.system(size: (MyApp.format == .tablet ? 28.0 : 24.0)) }
-var toolbarFont: Font { Font.system(size: (MyApp.format == .tablet ? 16.0 : 14.0)) }
-var captionFont: Font { Font.system(size: (MyApp.format == .tablet ? 20.0 : 18.0)) }
-var inputTitleFont: Font { Font.system(size: (MyApp.format == .tablet ? 20.0 : 18.0)) }
+var bannerFont: Font { Font.system(size: (MyApp.format != .phone ? 24.0 : 24.0)) }
+var alternateBannerFont: Font { Font.system(size: (MyApp.format != .phone ? 14.0 : 18.0)) }
+var defaultFont: Font { Font.system(size: (MyApp.format != .phone ? 20.0 : 24.0)) }
+var toolbarFont: Font { Font.system(size: (MyApp.format != .phone ? 16.0 : 14.0)) }
+var captionFont: Font { Font.system(size: (MyApp.format != .phone ? 8.0 : 18.0)) }
+var inputTitleFont: Font { Font.system(size: (MyApp.format != .phone ? 16.0 : 18.0)) }
 var inputFont: Font { Font.system(size: 14.0) }
 var lookupFont: Font { Font.system(size: 12.0) }
 var pickerFont: Font { Font.system(size: 10.0) }
-var messageFont: Font { Font.system(size: (MyApp.format == .tablet ? 16.0 : 14.0)) }
-var searchFont: Font { Font.system(size: (MyApp.format == .tablet ? 20.0 : 16.0)) }
+var messageFont: Font { Font.system(size: (MyApp.format != .phone ? 16.0 : 14.0)) }
+var searchFont: Font { Font.system(size: (MyApp.format != .phone ? 20.0 : 16.0)) }
 
 // Excel Colors
 let excelWhite = Color(red: 255, green: 255, blue: 255)
@@ -67,10 +70,15 @@ let backupDateFormat = "yyyy-MM-dd HH:mm:ss.SSS Z"
 let tagMultiplier = 1000000
 let nullUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
 
+// Slide in IDs - Need to be declared here as there seem to be multiple instances of views
+let rootViewId = UUID()
+let bankAccountViewId = UUID()
+let statementViewId = UUID()
+
 // Localisable names
 
-public let appName = "Import Results"
-public let appImage = "ImportUsebio"
+public let appName = "Club Treasurer"
+public let appImage = "ClubTreasurer"
 
 public let dateFormat = "EEEE d MMMM yyyy"
 

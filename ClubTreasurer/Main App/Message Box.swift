@@ -1,6 +1,6 @@
 //
 //  Miscellanous.swift
-// Bridge Score
+//  Bridge Score
 //
 //  Created by Marc Shearer on 02/03/2021.
 //
@@ -43,7 +43,7 @@ import SwiftUI
 }
 
 struct MessageBoxView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State var suppressIcon: Bool = false
     @Bindable var values = MessageBox.shared
     @State var showIcon = true
@@ -93,14 +93,11 @@ struct MessageBoxView: View {
                             } label: {
                                 Text(okText)
                                     .foregroundColor(values.okDestructive ? Palette.destructiveButton.text : Palette.highlightButton.text)
-                                    .frame(width: 100, height: 30)
                                     .font(.callout).minimumScaleFactor(0.5)
+                                    .frame(width: 100, height: 30)
                                     .background(values.okDestructive ? Palette.destructiveButton.background : Palette.highlightButton.background)
                                     .cornerRadius(15)
                             }
-                            .frame(width: 100, height: 30)
-                            .buttonStyle(PlainButtonStyle())
-                            .focusable(false)
                         }
                         
                         if let cancelText = values.cancelText {
@@ -113,14 +110,11 @@ struct MessageBoxView: View {
                             } label: {
                                 Text(cancelText)
                                     .foregroundColor(Palette.highlightButton.text)
-                                    .frame(width: 100, height: 30)
                                     .font(.callout).minimumScaleFactor(0.5)
+                                    .frame(width: 100, height: 30)
                                     .background(Palette.highlightButton.background)
                                     .cornerRadius(15)
                             }
-                            .frame(width: 100, height: 30)
-                            .buttonStyle(PlainButtonStyle())
-                            .focusable(false)
                         }
                         
                         if values.okText == nil && values.cancelText == nil {
