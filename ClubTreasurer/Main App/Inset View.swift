@@ -45,7 +45,7 @@ struct InsetView <Content>: View where Content: View {
                 }
                 .background(color.background)
                 .cornerRadius(10)
-                Spacer().frame(width: 10)
+                Spacer()
             }
         }
         .foregroundColor(color.text)

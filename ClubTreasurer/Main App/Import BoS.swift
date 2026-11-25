@@ -20,8 +20,8 @@ enum BoSColumns: String {
 
 class ImportBankOfScotland {
     
-    class func importStatementLines(_ csvData: String, statement: StatementViewModel) {
-        var statementLines: [StatementLineViewModel] = []
+    class func importStatementLines(_ csvData: String, statement: Statement) {
+        var statementLines: [StatementLine] = []
         
         let lines = csvData.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
         if lines.count < 2 {
@@ -56,7 +56,15 @@ class ImportBankOfScotland {
                         let amount = abs(debitAmount - creditAmount)
                         let drCr = (debitAmount > creditAmount ? DebitCreditType.debit : .credit)
                         
-                        let statementLine = StatementLineViewModel(statement: statement, sequence: index, transCode: "", date: transactionDate, type: transactionType, drCr: drCr, text: transactionDescription, amount: amount, payee: "", notes: "")
+                        var transType: TransType?
+                        transType = TransType.transType(code: transactionType)
+                        if transType == nil {
+                            // Missing - create it
+                            transType = TransType(code: transactionType, desc: "\(transactionType) code")
+                            transType?.insert()
+                        }
+                        
+                        let statementLine = StatementLine(statement: statement, sequence: index, transType: transType, date: transactionDate, drCr: drCr, text: transactionDescription, amount: amount, payee: "", notes: "")
                         
                         statementLines.append(statementLine)
                     }

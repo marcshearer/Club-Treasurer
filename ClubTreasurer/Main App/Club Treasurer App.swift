@@ -20,13 +20,11 @@ struct MyScene: Scene {
     var body: some Scene {
         WindowGroup {
                 RootView()
+                .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
 #if os(macOS)
                 .background(WindowSetup())
 #endif
-                .buttonStyle(.plain)
-                .frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity)
         }
-        //.windowResizability(.contentSize)
         .windowStyle(.hiddenTitleBar)
         .onChange(of: scenePhase, initial: false) { (_, phase) in
             if phase == .active {

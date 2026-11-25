@@ -113,7 +113,10 @@ struct Banner: View {
                 }
                 Spacer().frame(height: height != nil ? (height! - CGFloat(40)) / CGFloat(2) : (alternateStyle ? 0 : bannerBottom))
             }
+            .focusable(false)
         }
+        .buttonStyle(.plain)
+        .focusEffectDisabled()
         .disabled(disabled.wrappedValue)
         .onAppear {
             bannerColor = (alternateStyle || alternateColor ? Palette.alternateBanner : Palette.banner)
@@ -208,7 +211,6 @@ struct Banner_Menu : View {
             } label: {
                 (image ?? AnyView(Image(systemName: "line.3.horizontal"))).foregroundColor(bannerColor.text).font(bannerFont)
             }
-    
     }
 }
 

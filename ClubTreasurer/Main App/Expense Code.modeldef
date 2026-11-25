@@ -1,11 +1,11 @@
-#@AppName:       ClubTreasurer
-#@ Name:         ExpenseCode
-#@ Description:  Expense Code
-#@ VmSuffix:     ViewModel
-#@ LoadSequence: 1
-
-Name,Desc,Type,Optional,Id,InitValue,InInit,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
-expenseCodeId,Expense Code ID,UUID,,true,,,unique,true
-code,Code,String,,,,true,unique,true
-desc,Description,String,,,,true,unique
-retired,Retired,Boolean,,,,optional,
+#@AppName:     ClubTreasurer,,,,,,,,
+#@ Name:          ExpenseCode,,,,,,,,
+#@ Description:  Expense Code,,,,,,,,
+#@ LoadSequence: 1,,,,,,,,
+,,,,,,,,
+Name,Desc,Type,ViewModelEntity,Optional,Id,InitValue,InInit,Resequence,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
+expenseCodeId,Expense Code ID,UUID,,,true,,,,unique,true
+code,Code,String,,,,,true,,unique,true
+desc,Description,String,,,,,true,,unique
+sequence,Sequence,Int,,,,Int(Int16.max),optional,true,
+retired,Retired,Boolean,,,,,optional,,

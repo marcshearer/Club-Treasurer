@@ -24,7 +24,10 @@ struct ToolbarView : View {
                     addAction()
                 } label: {
                     Image(systemName: "plus")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
                 }
+                .focusable(false)
                 .opacity(!(canAdd?() ?? true) ? 0.3 : 1.0)
                 .disabled(!(canAdd?() ?? true))
                 
@@ -33,8 +36,10 @@ struct ToolbarView : View {
                     removeAction()
                 } label: {
                     Image(systemName: "minus")
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
                 }
-                .opacity(!(canRemove?() ?? true) ? 0.3 : 1.0)
+                .focusable(false)                .opacity(!(canRemove?() ?? true) ? 0.3 : 1.0)
                 .disabled(!(canRemove?() ?? true))
                 Spacer()
             }

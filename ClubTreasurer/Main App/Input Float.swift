@@ -43,7 +43,6 @@ struct InputFloatIOS : View {
     var inlineTitleWidth: CGFloat = 180
     var onChange: ((Float?)->())?
     
-    @State private var keyboardType: UIKeyboardType = .numbersAndPunctuation
     @State private var refresh = false
     @State private var wrappedText = ""
     var text: Binding<String> {
@@ -106,8 +105,6 @@ struct InputFloatIOS : View {
                             }
                             .lineLimit(1)
                             .padding(.all, 1)
-                            .keyboardType(keyboardType)
-                            .autocapitalization(.none)
                             .disableAutocorrection(false)
                     }
                 }

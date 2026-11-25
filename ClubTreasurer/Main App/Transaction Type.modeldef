@@ -1,7 +1,11 @@
-//
-//  Transaction Type.swift
-//  ClubTreasurer
-//
-//  Created by Marc Shearer on 25/11/2026.
-//
-
+#@AppName:     ClubTreasurer,,,,,,,,
+#@ Name:         TransType,,,,,,,,
+#@ Description:  Transaction Type,,,,,,,,
+#@ LoadSequence: 1,,,,,,,,
+,,,,,,,,
+Name,Desc,Type,ViewModelEntity,Optional,Id,InitValue,InInit,Resequence,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
+transTypeId,Trans Type ID,UUID,,,true,,,,unique,true
+code,Code,String,,,,,true,,unique,true
+desc,Description,String,,,,,true,,unique
+sequence,Sequence,Int,,,,Int(Int16.max),optional,true,
+retired,Retired,Boolean,,,,,optional,,

@@ -6,314 +6,186 @@
     //
 
 import SwiftUI
-import AudioToolbox
 
 struct Input : View {
-        
+    
+#if canImport(UIKit)
+    typealias KeyboardType = UIKeyboardType
+#else
+    enum KeyboardType {
+        case `default`
+        case URL
+    }
+#endif
+    
+#if canImport(UIKit)
+    typealias CapitalizationType = UITextAutocapitalizationType
+#else
+    enum CapitalizationType {
+        case sentences
+        case none
+    }
+#endif
+    
     var title: String?
-    @Binding var field: String
+    var field: Binding<String>
     var message: Binding<String>?
-    var messageOffset: CGFloat = 0.0
-    var desc: Binding<String>?
-    var descOffset: CGFloat = 0.0
-    var placeHolder: String = ""
-    var secure: Bool = false
-    var topSpace: CGFloat = inputTopHeight
+    var placeHolder: String? = nil
+    var topSpace: CGFloat = 0
     var leadingSpace: CGFloat = 0
-    var height: CGFloat = inputDefaultHeight
-    var width: CGFloat = 1000
-    var inlineTitle: Bool = false
-    var inlineTitleWidth: CGFloat = 150
+    var height: CGFloat = 40
+    var width: CGFloat?
+    var color: PaletteColor = Palette.input
+    var cornerRadius: CGFloat = 0
     var keyboardType: KeyboardType = .default
-    var autoCapitalize: AutoCapitalization = .sentences
+    var autoCapitalize: CapitalizationType = .sentences
     var autoCorrect: Bool = true
-    var isEnabled: Bool = true
-    var isReadOnly: Bool = false
-    var limitText: Int? = nil
-    var pickerAction: (()->())?
-    var onKeyPress: ((KeyPress)->(KeyPress.Result))?
-    var detectKeys: Set<KeyEquivalent>?
+    var multiLine: Bool = false
+    var clearText: Bool = true
+    var asText: Bool = false
+    var inlineTitle: Bool = true
+    var inlineTitleWidth: CGFloat = 180
     var onChange: ((String)->())?
-    var onLoseFocus: ((String)->())?
-    @FocusState private var focus: Bool?
-    @State private var selection: TextSelection?
-
+    var focus: FocusState<FocusField?>.Binding? = nil
+    var focusValue: FocusField? = nil
+    @State private var refresh = false
+    
     var body: some View {
-        let pickerWidth: CGFloat = (pickerAction == nil ? 0 : inputDefaultHeight * 0.95)
+        
         VStack(spacing: 0) {
+            // Just to trigger view refresh
+            if refresh { EmptyView() }
+            
             if title != nil && !inlineTitle {
-                InputTitle(title: title, message: message, messageOffset: messageOffset, topSpace: topSpace, isEnabled: isEnabled)
-                    .frame(width: width + (inlineTitle ? inlineTitleWidth : 0) + leadingSpace + 67)
+                HStack {
+                    InputTitle(title: title, message: message, topSpace: topSpace, width: (width == nil ? nil : width! + leadingSpace + 16 + (clearText && !asText ? 20 : 0)))
+                    Spacer().frame(width: clearText && !asText ? 20 : 0)
+                }
+                .frame(height: 22)
                 Spacer().frame(height: 8)
+            } else if let message = message?.wrappedValue {
+                HStack {
+                    Spacer()
+                    Text(message)
+                        .foregroundColor(Palette.background.strongText)
+                        .font(messageFont)
+                    Spacer().frame(width: 16)
+                }
+                .frame(height: 8)
             } else {
                 Spacer().frame(height: topSpace)
             }
-            HStack {
+            HStack(spacing: 0) {
                 Spacer().frame(width: leadingSpace)
                 if title != nil && inlineTitle {
                     HStack {
-                        Text(title!)
-                            .font(inputFont)
+                        Spacer().frame(width: 8)
+                        VStack(spacing: 0) {
+                            Spacer()
+                            Text(title!)
+                                .frame(height: height - 8)
+                            Spacer()
+                        }
                         Spacer()
                     }
                     .frame(width: inlineTitleWidth)
+                    .frame(height: height).layoutPriority(999)
+                    Spacer().frame(width: 14)
                 }
-                ZStack(alignment: .leading){
-                    HStack {
-                        Rectangle()
-                            .foregroundColor(Palette.input.background)
-                            .cornerRadius(inputCornerRadius)
-                    }
-                    .if(pickerAction != nil && isReadOnly && isEnabled) { (view) in
-                        view.onTapGesture {
-                            pickerAction?()
-                        }
-                    }
-                    if inlineTitle || title == nil {
-                        if let desc = desc?.wrappedValue {
-                            HStack {
-                                Spacer().frame(width: descOffset)
-                                HStack {
-                                    Text(desc)
-                                        .font(lookupFont)
-                                        .foregroundColor(Palette.input.themeText)
-                                        .truncationMode(.tail)
-                                    Spacer()
-                                }
-                                .frame(width: width - descOffset - pickerWidth)
-                            }
-                        }
-                    }
-                    if let pickerAction = pickerAction, isEnabled {
-                        HStack {
-                            Spacer()
-                            pickerButton(width: pickerWidth, height: height, pickerAction: pickerAction)
-                                .frame(width: pickerWidth, height: height)
-                        }
-                    }
-                    if field.isEmpty && placeHolder != "" && (pickerAction == nil || !isReadOnly || !isEnabled) {
-                        VStack {
-                            HStack {
-                                Spacer().frame(width: 10)
-                                LeadingClickableText(placeHolder)
-                                    .font(inputFont)
-                                    .foregroundColor(Palette.input.faintText)
-                            }
-                        }
-                    }
-                    HStack {
-                        if secure {
-                            VStack {
-                                Spacer().frame(height: (MyApp.target == .macOS ? 2 :10))
-                                SecureField("", text: $field)
-                                    .font(inputFont)
-                                    .onChange(of: field, initial: false) { (_, value) in
-                                        if let limitText = limitText, value.count > limitText {
-                                            field = String(value.prefix(limitText))
-                                        }
-                                        onChange?(value)
-                                    }
-                                    .textFieldStyle(PlainTextFieldStyle())
-                                    .disabled(!isEnabled || isReadOnly)
-                                    .foregroundColor(isEnabled ? Palette.input.text : Palette.input.faintText)
-                                    .background(.clear)
-                                    .inputStyle(width: width, height: inputDefaultHeight)
-                                    .frame(width: descOffset == 0 ? width - pickerWidth : descOffset)
-                                    .if(detectKeys != nil) { (view) in
-                                        view.onKeyPress(keys: detectKeys!) { press in
-                                            return (onKeyPress?(press) ?? .ignored)
-                                        }
-                                    }
-                                Spacer()
-                            }
-                        } else if height > inputDefaultHeight {
-                            VStack {
-                                if isEnabled && !isReadOnly {
-                                    TextEditor(text: $field)
-                                        .font(inputFont)
-                                        .onChange(of: field, initial: false)
-                                    { (_, value) in
-                                        if let limitText = limitText, value.count > limitText {
-                                            field = String(value.prefix(limitText))
-                                        }
-                                        onChange?(field)
-                                    }
-                                    .onChange(of: focus) {
-                                        if !(focus ?? false) {
-                                            onLoseFocus?(field)
-                                        }
-                                    }
-                                    .focused($focus, equals: true)
-                                    .disabled(!isEnabled || isReadOnly)
-                                    .foregroundColor(isEnabled ? Palette.input.text : Palette.input.faintText)
-                                    .background(.clear)
-                                    .inputStyle(width: width, height: height - (MyApp.target == .macOS ? 16 : 0), padding: 5.0)
-                                    .myKeyboardType(self.keyboardType)
-                                    .myAutocapitalization(autoCapitalize)
-                                    .disableAutocorrection(!autoCorrect)
-                                    .textCase(.uppercase)
-                                    .frame(width: descOffset == 0 ? width - pickerWidth : descOffset)
-                                    .if(detectKeys != nil) { (view) in
-                                        view.onKeyPress(keys: detectKeys!) { press in
-                                            return (onKeyPress?(press) ?? .ignored)
-                                        }
-                                    }
-                                } else {
-                                    VStack {
-                                        Spacer()
-                                        HStack {
-                                            Spacer().frame(width: 10)
-                                            Text(field)
-                                                .foregroundColor(Palette.input.faintText)
-                                                .font(inputFont)
-                                                .frame(height: height)
-                                            Spacer()
-                                        }
-                                        Spacer()
-                                    }
-                                    .if(pickerAction != nil && isReadOnly && isEnabled) { (view) in
-                                        view.onTapGesture {
-                                            pickerAction?()
-                                        }
-                                    }
-                                    .frame(width: descOffset == 0 ? width - pickerWidth : descOffset)
-                                }
-                            }
-                            .font(inputFont)
-                            .frame(height: height)
-                        } else {
-                            TextField("", text: $field, selection: $selection)
-                                .font(inputFont)
-                                .onChange(of: field, initial: false) { (oldValue, value) in
-                                    if let limitText = limitText, value.count > limitText {
-                                        field = String(value.prefix(limitText))
-                                    }
-                                    onChange?(field)
-                                }
-                                .onChange(of: focus) {
-                                    if !(focus ?? false) {
-                                        onLoseFocus?(field)
-                                    }
-                                }
-                                .focused($focus, equals: true)
-                                .textFieldStyle(PlainTextFieldStyle())
-                                .foregroundColor(Palette.input.text)
-                                .background(.clear)
-                                .inputStyle(width: width, height: height)
-                                .myKeyboardType(self.keyboardType)
-                                .myAutocapitalization(autoCapitalize)
-                                .disableAutocorrection(!autoCorrect)
-                                .disabled(!isEnabled || isReadOnly)
-                                .frame(height: height)
-                                .if(detectKeys != nil) { (view) in
-                                    view.onKeyPress(keys: detectKeys!) { press in
-                                        return (onKeyPress?(press) ?? .ignored)
-                                    }
-                                }
-                                .frame(width: descOffset == 0 ? width - pickerWidth : descOffset)
-                            Spacer()
-                        }
-                    }
-                    if field.isEmpty && placeHolder != "" && pickerAction != nil && isReadOnly && isEnabled {
-                        VStack {
-                            HStack {
-                                Spacer().frame(width: 10)
-                                LeadingClickableText(placeHolder)
-                                    .font(inputFont)
-                                    .foregroundColor(Palette.input.faintText)
-                            }
-                        }
-                        .onTapGesture {
-                            // Allow click on placeHolder to activate picker
-                            pickerAction?()
-                        }
-                    }
-                }
-                .frame(width: width)
-            }
-        }
-        .frame(height: height + topSpace + (title == nil || inlineTitle ? 0 : 20))
-    }
-    
-    func pickerButton(width: CGFloat, height: CGFloat, pickerAction: @escaping ()->()) -> some View {
-        VStack {
-            let spacing: CGFloat = 2.0
-            Spacer().frame(height: spacing * 2)
-            HStack {
-                Spacer().frame(width: spacing)
                 HStack {
-                    Spacer()
-                    Image(systemName: "chevron.up.chevron.down")
-                        .frame(width: width - (2 * spacing), height: height - (2 * spacing))
-                        .background(Palette.pickerButton.background)
-                        .foregroundColor(Palette.pickerButton.text)
-                        .bold()
-                        .cornerRadius(inputPickerCornerRadius)
-                        .font(pickerFont)
+                    ZStack {
+                        if !asText && field.wrappedValue == "" {
+                            if let placeHolder = placeHolder {
+                                VStack(spacing: 0) {
+                                    HStack {
+                                        Spacer().frame(width: 5)
+                                        Text(placeHolder)
+                                            .foregroundColor(Palette.input.faintText)
+                                        Spacer()
+                                    }
+                                    .frame(height: height)
+                                }
+                                .frame(height: height).layoutPriority(999)
+                            }
+                        }
+                        VStack(spacing: 0) {
+                            Spacer().frame(height: 4)
+                            if asText {
+                                HStack {
+                                    Spacer().frame(width: 6)
+                                    Text(field.wrappedValue)
+                                        .truncationMode(.tail)
+                                        .foregroundColor(color.text)
+                                        .if(multiLine) { view in
+                                            view.lineLimit(1)
+                                        }
+                                }
+                            } else {
+                                UndoWrapper(field) { field in
+                                    TextField("", text: field)
+                                        .background(.clear)
+                                        .scrollContentBackground(.hidden)
+                                        .textFieldStyle(.plain)
+                                        .padding(.horizontal, 12)
+                                        .frame(height: height)
+                                        .if(focus != nil && focusValue != nil) { view in
+                                            view.focused(focus!, equals: focusValue!)
+                                        }
+                                        .if(multiLine) { view in
+                                            view.lineLimit(1)
+                                        }
+                                        .disableAutocorrection(!autoCorrect)
+                                        .focusEffectDisabled()
+                                        .foregroundColor(color.text)
+                                }
+                            }
+                        }
+                        .frame(height: height).layoutPriority(999)
+                    }
+                }
+                .background(color.background)
+                .cornerRadius(cornerRadius)
+                .if(width != nil) { (view) in
+                    view.frame(width: width!)
+                }
+
+                if width == nil {
                     Spacer()
                 }
-                Spacer().frame(width: spacing)
+                
+                if clearText && !asText {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer().frame(width: 10)
+                            Button {
+                                field.wrappedValue = ""
+                            } label: {
+                                Image(systemName: "x.circle.fill").font(inputTitleFont).foregroundColor(Palette.clearText)
+                            }
+                            .focusable(false)
+                        }
+                        Spacer()
+                    }.frame(width: 20)
+                }
+                Spacer()
+                Spacer().frame(width: 16)
             }
-            Spacer().frame(height: spacing * 2)
+            .font(inputFont)
         }
-        .onTapGesture {
-            pickerAction()
+        .frame(height: self.height + self.topSpace + (title != nil && !inlineTitle ? 24 : (message != nil ? 16 : 0)))
+    }
+}
+
+private struct OptionalFocusModifier<Value: Hashable>: ViewModifier {
+    var binding: FocusState<Value?>.Binding?
+    var value: Value?
+
+    func body(content: Content) -> some View {
+        if let binding, let value {
+            content.focused(binding, equals: value)
+        } else {
+            content
         }
     }
 }
-
-struct InputViewModifier : ViewModifier {
-    @State var width: CGFloat = 0.0
-    @State var height: CGFloat = 0.0
-    @State var padding: CGFloat = 10.0
-
-    func body(content: Content) -> some View { content
-        .frame(height: height)
-        .padding([.leading, .trailing], padding)
-        .frame(maxWidth: width)
-    }
-}
-
-extension View {
-    fileprivate func inputStyle(width: CGFloat = 0, height: CGFloat = 0, padding: CGFloat = 10.0) -> some View {
-        self.modifier(InputViewModifier(width: width, height: height, padding: padding))
-    }
-}
-
-#if os(macOS)
-extension NSTextView {
-  open override var frame: CGRect {
-    didSet {
-        backgroundColor = .clear
-        drawsBackground = false
-        isRulerVisible = false
-    }
-  }
-}
-
-extension NSTextField {
-  open override var frame: CGRect {
-    didSet {
-        backgroundColor = .clear
-        drawsBackground = true
-        isBordered = false
-        isBezeled = false
-        focusRingType = .none
-    }
-  }
-}
-
-extension NSSecureTextField {
-  open override var frame: CGRect {
-    didSet {
-        backgroundColor = .clear
-        drawsBackground = true
-        isBordered = false
-        isBezeled = false
-        focusRingType = .none
-    }
-  }
-}
-#endif
-
-

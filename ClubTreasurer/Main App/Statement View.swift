@@ -11,7 +11,7 @@ import UniformTypeIdentifiers
 struct StatementView: View {
     @Environment(\.dismiss) var dismiss
     var newStatement: Bool
-    @State var statement: StatementViewModel
+    @State var statement: Statement
     @Binding var path: NavigationPath
     
     var title: String = "Statement"
@@ -34,8 +34,8 @@ struct StatementView: View {
                 Spacer().frame(height: 10)
                 InsetView(title: "Details", color: Palette.alternate) {
                     Middle {
-                        Leading(padding: 0) {
-                            Input(title: "Description", field: $statement.desc, message: $message, topSpace: 0, width: 400) //, inlineTitle: true, inlineTitleWidth: 100)
+                        Leading(padding: 20) {
+                            Input(title: "Description", field: $statement.desc, message: $message, topSpace: 0, width: 400, cornerRadius: 10, inlineTitle: true, inlineTitleWidth: 100)
                                 .onChange(of: statement.desc, initial: true) { _, newValue in
                                     message = statement.saveMessage
                                 }
@@ -43,11 +43,11 @@ struct StatementView: View {
                         Spacer().frame(height: 8)
                     }
                 }
-                .frame(height: 75)
+                .frame(height: 90)
                 Spacer().frame(height: 10)
                 InsetView(title: "Statement Lines", color: Palette.alternate) {
                     GeometryReader { geometry in
-                        let data = StatementLineViewModel.masterData.filter({$0.statement == statement})
+                        let data = StatementLine.masterData.filter({$0.statement == statement})
                         if message != "" || !data.isEmpty {
                             VStack {
                                 HStack {
@@ -70,7 +70,7 @@ struct StatementView: View {
                                             ForEach(data) { (line) in
                                                 Text(line.date!.toString())
                                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                                Text(line.type)
+                                                Text(line.transType?.code ?? "???")
                                                     .frame(maxWidth: .infinity, alignment: .leading)
                                                 Text(line.text)
                                                     .lineLimit(2)

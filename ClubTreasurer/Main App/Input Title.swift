@@ -11,13 +11,11 @@ struct InputTitle : View {
     
     @State var title: String?
     var message: Binding<String>? = nil
-    var messageOffset: CGFloat = 0.0
-    var topSpace: CGFloat = inputTopHeight
-    var fillTrailing: Bool = true
+    var topSpace: CGFloat = 16
+    var width: CGFloat?
     var buttonImage: AnyView?
     var buttonText: String?
     var buttonAction: (()->())?
-    var isEnabled: Bool = true
     
     var body: some View {
 
@@ -27,7 +25,9 @@ struct InputTitle : View {
             if let title = self.title {
                 HStack(alignment: .center, spacing: nil) {
                     Spacer().frame(width: 16)
-                    Text(title).font(.headline).foregroundColor(isEnabled ? Palette.input.text : Palette.input.faintText)
+                    Text(title)
+                        .foregroundColor(Palette.background.text)
+                        .font(inputTitleFont)
                     
                     if let action = buttonAction {
                         Spacer().frame(width: 16)
@@ -43,23 +43,24 @@ struct InputTitle : View {
                                 }
                                 Text(text)
                                     .foregroundColor(Palette.background.themeText)
+                                    .font(inputFont)
                             }
                         }
                         .menuStyle(DefaultMenuStyle())
                     }
-                    if fillTrailing {
-                        Spacer()
-                    }
+                    Spacer()
                     if let message = message?.wrappedValue {
                         VStack(spacing: 0) {
-                            //Spacer().layoutPriority(.leastNonzeroMagnitude)
-                            Text(message).foregroundColor(Palette.background.strongText).font(.caption)
+                            Spacer()
+                            Text(message)
+                                .foregroundColor(Palette.background.strongText)
+                                .font(messageFont)
                         }
-                        Spacer().frame(width: 32 + messageOffset)
+                        Spacer().frame(width: 16)
                     }
                 }
             }
         }
-        .frame(height: 12 + topSpace)
+        .frame(width: width)
     }
 }

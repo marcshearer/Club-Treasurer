@@ -9,12 +9,14 @@ import SwiftUI
 
 enum Destination: Hashable {
     case root
-    case bankAccount(bankAccount: BankAccountViewModel)
-    case statement(statement: StatementViewModel)
+    case bankAccount(bankAccount: BankAccount)
+    case statement(statement: Statement)
+    case expenseCode
+    case transType
     
     var navigate: Bool {
         switch self {
-        case .bankAccount, .statement:
+        case .bankAccount, .statement, .expenseCode:
             true
         default:
             false
@@ -33,7 +35,9 @@ struct RootView : View {
     var body: some View {
         StandardView("Root View", slideInId: id, navigation: true, path: $path) {
             VStack {
-                Banner(title: Binding.constant("Bank Accounts"), back: false)
+                let bannerOptions = [BannerOption(text: "Expense Codes", likeBack: true, menu: true, action: {path.append(Destination.expenseCode)}),
+                                     BannerOption(text: "Transaction Types", likeBack: true, menu: true, action: {path.append(Destination.transType)})]
+                Banner(title: Binding.constant("Bank Accounts"), back: false, optionMode: .both, menuImage: AnyView(Image(systemName: "gearshape")), menuTitle: "Setup", menuId: id, options: bannerOptions)
                 HStack {
                     Spacer().frame(width: 5)
                     VStack {
@@ -42,7 +46,7 @@ struct RootView : View {
                         newBankAccountTileView()
                         ScrollView {
                             LazyVStack {
-                                ForEach(BankAccountViewModel.masterData) { (bankAccount) in
+                                ForEach(BankAccount.masterData) { (bankAccount) in
                                     bankAccountTileView(selectedBankAccount: bankAccount)
                                 }
                             }
@@ -56,6 +60,7 @@ struct RootView : View {
             }
             .navigationDestination(for: Destination.self) { (destination) in
                 AnyView(navigateToDestinationView(destination: destination))
+                    .navigationBarBackButtonHidden()
             }
         }
     }
@@ -67,6 +72,10 @@ struct RootView : View {
             result = BankAccountView(newAccount: bankAccount.managedObject == nil, bankAccount: bankAccount, path: $path)
         case .statement(let statement):
             result = StatementView(newStatement: statement.managedObject == nil, statement: statement, path: $path)
+        case .expenseCode:
+            result = ExpenseCodeSetupView()
+        case .transType:
+            result = TransTypeSetupView()
         default:
             result = EmptyView()
         }
@@ -81,11 +90,11 @@ struct RootView : View {
             }
         }
         .onTapGesture {
-            path.append(Destination.bankAccount(bankAccount: BankAccountViewModel()))
+            path.append(Destination.bankAccount(bankAccount: BankAccount()))
         }
     }
     
-    func bankAccountTileView(selectedBankAccount: BankAccountViewModel) -> some View {
+    func bankAccountTileView(selectedBankAccount: BankAccount) -> some View {
         return ListTileView(color: Palette.tile) {
             HStack {
                 Text(selectedBankAccount.desc)

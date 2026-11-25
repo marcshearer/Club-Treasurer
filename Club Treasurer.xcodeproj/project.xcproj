@@ -71,6 +71,8 @@
                 { "path": "Input String.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Input Integer.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Input Float.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "input Number Mac.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "Input Toggle.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Input Title.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Clickable Text.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "View Wrappers.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
@@ -95,7 +97,9 @@
                 { "path": "Bank Account.modeldef", "target-membership": [ "ClubTreasurer/resources" ] },
                 { "path": "Statement.modeldef", "target-membership": [ "ClubTreasurer/resources" ] },
                 { "path": "Statement Line.modeldef", "target-membership": [ "ClubTreasurer/resources" ] },
+                { "path": "Line Allocation.modeldef", "target-membership": [ "ClubTreasurer/resources" ] },
                 { "path": "Expense Code.modeldef", "target-membership": [ "ClubTreasurer/resources" ] },
+                { "path": "Transaction Type.modeldef", "target-membership": [ "ClubTreasurer/compile-sources" ] },
               ],
             }, {
               "kind": "group",
@@ -111,11 +115,18 @@
               ],
             }, {
               "kind": "group",
-              "name": "Views",
+              "name": "Main Views",
               "children": [
                 { "path": "Root View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Bank Account View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
                 { "path": "Statement View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+              ],
+            }, {
+              "kind": "group",
+              "name": "Setup Views",
+              "children": [
+                { "path": "Expense Code Setup View.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
+                { "path": "Transaction Type Setup.swift", "target-membership": [ "ClubTreasurer/compile-sources" ] },
               ],
             },
           ],

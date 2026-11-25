@@ -16,12 +16,14 @@ struct Separator : View {
     
     var orientation: SeparatorDirection!
     var padding = false
-    var thickness: CGFloat = 0.5
+    var thickness: CGFloat
+    var color: Color
     
-    init(direction: SeparatorDirection = .horizontal, padding: Bool = false, thickness: CGFloat = 0.5) {
+    init(direction: SeparatorDirection = .horizontal, padding: Bool = false, thickness: CGFloat = 1.0, color: Color = Palette.separator.background) {
         self.orientation = direction
         self.padding = padding
         self.thickness = thickness
+        self.color = color
     }
     
     var body : some View {
@@ -31,7 +33,7 @@ struct Separator : View {
                     Spacer().frame(height: 16)
                 }
                 Rectangle()
-                    .foregroundColor(Palette.separator.background)
+                    .foregroundColor(color)
                 if padding {
                     Spacer().bottomSpacer
                 }
@@ -43,7 +45,7 @@ struct Separator : View {
                     Spacer().frame(width: 16)
                 }
                 Rectangle()
-                    .foregroundColor(Palette.separator.background)
+                    .foregroundColor(color)
                 if padding {
                     Spacer().rightSpacer
                 }

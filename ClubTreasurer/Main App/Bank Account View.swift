@@ -10,7 +10,7 @@ import SwiftUI
 struct BankAccountView: View {
     @Environment(\.dismiss) var dismiss
     var newAccount: Bool
-    @State var bankAccount: BankAccountViewModel
+    @State var bankAccount: BankAccount
     @Binding var path: NavigationPath
     
     var title: String = "Bank Account"
@@ -25,8 +25,8 @@ struct BankAccountView: View {
                 Spacer().frame(height: 10)
                 InsetView(title: "Details", color: Palette.alternate) {
                     Middle {
-                        Leading(padding: 0) {
-                            Input(title: "Description", field: $bankAccount.desc, message: $message, topSpace: 0, width: 400) //, inlineTitle: true, inlineTitleWidth: 100)
+                        Leading(padding: 20) {
+                            Input(title: "Description", field: $bankAccount.desc, message: $message, topSpace: 0, width: 400, cornerRadius: 10, inlineTitle: true, inlineTitleWidth: 100)
                                 .onChange(of: bankAccount.desc, initial: true) { _, newValue in
                                     message = bankAccount.saveMessage
                                 }
@@ -34,14 +34,14 @@ struct BankAccountView: View {
                         Spacer().frame(height: 8)
                     }
                 }
-                .frame(height: 70)
+                .frame(height: 90)
                 Spacer().frame(height: 10)
                 InsetView(title: "Statements", color: Palette.alternate) {
                     VStack {
                         newStatementTileView()
                         ScrollView {
                             LazyVStack {
-                                let data = StatementViewModel.masterData.filter({$0.bankAccount == bankAccount})
+                                let data = Statement.masterData.filter({$0.bankAccount == bankAccount})
                                 ForEach(data) { (statement) in
                                     statementTileView(selectedStatement: statement)
                                 }
@@ -86,11 +86,11 @@ struct BankAccountView: View {
         }
         .onTapGesture {
             bankAccount.save()
-            path.append(Destination.statement(statement: StatementViewModel(bankAccount: bankAccount)))
+            path.append(Destination.statement(statement: Statement(bankAccount: bankAccount)))
         }
     }
     
-    func statementTileView(selectedStatement: StatementViewModel) -> some View {
+    func statementTileView(selectedStatement: Statement) -> some View {
         return ListTileView(color: Palette.tile) {
             HStack {
                 Text(selectedStatement.desc)

@@ -1,0 +1,12 @@
+#@AppName:       ClubTreasurer,,,
+#@ Name:         LineAllocation,,,
+#@ Description:  Statement Line Allocation,,,
+#@ LoadSequence: 2,,,
+#,,,
+Name,Desc,Type,ViewModelEntity,Optional,Id,InitValue,InInit,Resequence,BeforeInsert,Lookup,EnumName,EnumValue1,EnumValue2,EnumValue3,EnumValue4
+lineAllocationtId,Line Allocation Id,UUID,,,true,,false,,unique,True
+statementLine,Statement Line,ViewModel,StatementLine,true,,,true,,nonBlank
+expenseCode,Expense Code,ViewModel,ExpenseCode,true,,,true,,nonBlank
+amount,Amount,Float,,,,0,optional,,nonBlank
+notes,Notes,String,,,,,true,,
+sequence,Sequence,Int,,,,Int(Int16.max),optional,true,

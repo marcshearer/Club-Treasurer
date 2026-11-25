@@ -32,16 +32,19 @@ struct StandardView <Content> : View where Content : View {
             if let path = path {
                 NavigationStack(path: path) {
                     contentView()
+                        .buttonStyle(.plain)
                 }
                 .navigationViewStyle(IosStackNavigationViewStyle())
             } else {
                 NavigationStack() {
                     contentView()
+                        .buttonStyle(.plain)
                 }
                 .navigationViewStyle(IosStackNavigationViewStyle())
             }
         } else {
             contentView()
+                .buttonStyle(.plain)
         }
     }
     
