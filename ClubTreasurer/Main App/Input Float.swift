@@ -7,21 +7,43 @@
 import SwiftUI
 
 struct InputFloat : View {
-    
     var title: String?
-    @Binding var field: Float
+    @Binding var field: Float?
     var message: Binding<String>?
     var topSpace: CGFloat = 0
     var leadingSpace: CGFloat = 0
-    var height: CGFloat = inputDefaultHeight
+    var height: CGFloat = 40
+    var width: CGFloat?
+    var places: Int = 2
+    var maxCharacters: Int
+    var inlineTitle: Bool = true
+    var inlineTitleWidth: CGFloat = 180
+    var onChange: ((Float?)->())?
+
+    var body : some View {
+        #if targetEnvironment(macCatalyst)
+        InputNumberMac(title: title, field: $field, message: message, topSpace: topSpace, leadingSpace: leadingSpace, height: height, width: width, places: places, negative: true, maxCharacters: maxCharacters, inlineTitle: inlineTitle, inlineTitleWidth: inlineTitleWidth, onChange: onChange)
+        #else
+        InputFloatIOS(title: title, field: $field, message: message, topSpace: topSpace, leadingSpace: leadingSpace, height: height, width: width, places: places, inlineTitle: inlineTitle, inlineTitleWidth: inlineTitleWidth, onChange: onChange)
+        #endif
+    }
+}
+
+struct InputFloatIOS : View {
+    
+    var title: String?
+    @Binding var field: Float?
+    var message: Binding<String>?
+    var topSpace: CGFloat = 0
+    var leadingSpace: CGFloat = 0
+    var height: CGFloat = 40
     var width: CGFloat?
     var places: Int = 2
     var inlineTitle: Bool = true
-    var inlineTitleWidth: CGFloat = 150
+    var inlineTitleWidth: CGFloat = 180
     var onChange: ((Float?)->())?
-    @FocusState private var focus: Bool?
-
     
+    @State private var keyboardType: UIKeyboardType = .numbersAndPunctuation
     @State private var refresh = false
     @State private var wrappedText = ""
     var text: Binding<String> {
@@ -42,7 +64,7 @@ struct InputFloat : View {
             
             if title != nil && !inlineTitle {
                 HStack {
-                    InputTitle(title: title, message: message, topSpace: topSpace)
+                    InputTitle(title: title, message: message, topSpace: topSpace, width: (width == nil ? nil : width! + leadingSpace + 16))
                 }
                 Spacer().frame(height: 8)
             } else {
@@ -52,19 +74,24 @@ struct InputFloat : View {
                 Spacer().frame(width: leadingSpace)
                 if title != nil && inlineTitle {
                     HStack {
+                        Spacer().frame(width: 6)
                         Text(title!)
-                            .font(inputFont)
                         Spacer()
                     }
                     .frame(width: inlineTitleWidth)
                 }
 
                 HStack {
+                    Spacer().frame(width: 4)
+                    
                     UndoWrapper(text) { text in
-                        TextField("", text: text)
+                        TextField("", text: text, onEditingChanged: {(editing) in
+                            text.wrappedValue = Float(text.wrappedValue)?.toString(places: places) ?? ""
+                            field = Float(text.wrappedValue)
+                        })
                             .onSubmit {
                                 text.wrappedValue = Float(text.wrappedValue)?.toString(places: places) ?? ""
-                                field = Utility.round(Float(text.wrappedValue) ?? 0, places: places)
+                                field = Float(text.wrappedValue)
                             }
                             .onChange(of: text.wrappedValue, initial: false) { (_, newValue) in
                                 let filtered = newValue.filter { "0123456789 -,.".contains($0) }
@@ -72,20 +99,16 @@ struct InputFloat : View {
                                 if filtered != newValue {
                                     text.wrappedValue = filtered
                                 }
-                                field = Utility.round(Float(text.wrappedValue) ?? 0, places: places)
+                                field = Float(text.wrappedValue)
                                 if oldField != field {
                                     onChange?(field)
                                 }
                             }
-                            .onChange(of: focus) {
-                                text.wrappedValue = Float(text.wrappedValue)?.toString(places: places) ?? ""
-                                field = Utility.round(Float(text.wrappedValue) ?? 0, places: places)
-                            }
-                            .focused($focus, equals: true)
                             .lineLimit(1)
-                            .padding(.all, 10)
+                            .padding(.all, 1)
+                            .keyboardType(keyboardType)
+                            .autocapitalization(.none)
                             .disableAutocorrection(false)
-                            .textFieldStyle(.plain)
                     }
                 }
                 .if(width != nil) { (view) in
@@ -93,23 +116,26 @@ struct InputFloat : View {
                 }
                 .frame(height: height)
                 .background(Palette.input.background)
-                .cornerRadius(inputCornerRadius)
+                .cornerRadius(12)
     
-                if width == nil || !inlineTitle {
+                if width == nil {
                     Spacer()
                 }
             }
             .font(inputFont)
             .onChange(of: field, initial: false) { (_, field) in
-                let newValue = field.toString(places: places)
+                let newValue = (field == nil ? "" : field!.toString(places: places))
                 if newValue != wrappedText {
                     wrappedText = newValue
                 }
             }
             .onAppear {
-                text.wrappedValue = field.toString(places: places)
+                text.wrappedValue = (field == nil ? "" : field!.toString(places: places))
             }
         }
         .frame(height: self.height + ((self.inlineTitle ? 0 : self.topSpace) + (title == nil || inlineTitle ? 0 : 30)))
+        .if(width != nil) { (view) in
+            view.frame(width: width! + leadingSpace + (inlineTitle && title != nil ? inlineTitleWidth : 0) + 16)
+        }
     }
 }
